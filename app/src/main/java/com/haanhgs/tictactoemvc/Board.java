@@ -1,5 +1,8 @@
 package com.haanhgs.tictactoemvc;
 
+import android.app.Application;
+import android.widget.Toast;
+
 import static com.haanhgs.tictactoemvc.Player.O;
 import static com.haanhgs.tictactoemvc.Player.X;
 
@@ -23,10 +26,14 @@ public class Board {
     }
 
     public void restart(){
-       clearCells();
-       winner = null;
-       currentTurn = X;
-       state = GameState.Inprogress;
+        clearCells();
+        winner = null;
+        currentTurn = X;
+        state = GameState.Inprogress;
+    }
+
+    public Board(){
+        restart();
     }
 
     private boolean isOutOfBounds(int idx){
@@ -34,7 +41,7 @@ public class Board {
     }
 
     private boolean isCellValueAlreadySet(int row, int col){
-        return cells[row][col] != null;
+        return cells[row][col].getValue() != null;
     }
 
     private boolean isValid(int row, int col){
@@ -53,11 +60,11 @@ public class Board {
                 ||
                 cells[0][currentCol].getValue() == player
                 && cells[1][currentCol].getValue() == player
-                && cells[1][currentCol].getValue() == player
+                && cells[2][currentCol].getValue() == player
                 ||
                 cells[0][0].getValue() == player
                 && cells[1][1].getValue() == player
-                && cells[1][2].getValue() == player
+                && cells[2][2].getValue() == player
                 ||
                 cells[0][2].getValue() == player
                 && cells[1][1].getValue() == player
@@ -73,20 +80,22 @@ public class Board {
     public Player mark(int row, int col){
         Player playerThatMoved = null;
         if (isValid(row, col)){
+            cells[row][col] = new Cell();
             cells[row][col].setValue(currentTurn);
             playerThatMoved = currentTurn;
-
             if (isWinningMoveByPlayer(currentTurn, row, col)){
                 state = GameState.Finished;
                 winner = currentTurn;
             }else {
                 flipSide();
             }
-
         }
         return playerThatMoved;
     }
 
+    public Player getWinner() {
+        return winner;
+    }
 }
 
 
