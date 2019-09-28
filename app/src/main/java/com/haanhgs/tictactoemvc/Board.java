@@ -1,8 +1,8 @@
 package com.haanhgs.tictactoemvc;
 
-import android.app.Application;
-import android.widget.Toast;
-
+import static com.haanhgs.tictactoemvc.GameState.Draw;
+import static com.haanhgs.tictactoemvc.GameState.Finished;
+import static com.haanhgs.tictactoemvc.GameState.Inprogress;
 import static com.haanhgs.tictactoemvc.Player.O;
 import static com.haanhgs.tictactoemvc.Player.X;
 
@@ -12,10 +12,6 @@ public class Board {
     private Player winner;
     private GameState state;
     private Player currentTurn;
-
-    private enum GameState{
-        Inprogress, Finished
-    }
 
     private void clearCells(){
         for (int i = 0; i < 3; i++){
@@ -29,7 +25,7 @@ public class Board {
         clearCells();
         winner = null;
         currentTurn = X;
-        state = GameState.Inprogress;
+        state = Inprogress;
     }
 
     public Board(){
@@ -45,7 +41,7 @@ public class Board {
     }
 
     private boolean isValid(int row, int col){
-        if (state == GameState.Finished){
+        if (state == Finished){
             return false;
         }else if (isOutOfBounds(row) || isOutOfBounds(col)){
             return false;
@@ -76,6 +72,16 @@ public class Board {
         currentTurn = currentTurn == X? O : X;
     }
 
+    private boolean checkBoardFull(){
+        for (int i = 0; i < 3; i++){
+            for (int j = 0; j < 3; j++){
+                if (cells[i][j].getValue() == null){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public Player mark(int row, int col){
         Player playerThatMoved = null;
@@ -84,10 +90,13 @@ public class Board {
             cells[row][col].setValue(currentTurn);
             playerThatMoved = currentTurn;
             if (isWinningMoveByPlayer(currentTurn, row, col)){
-                state = GameState.Finished;
+                state = Finished;
                 winner = currentTurn;
             }else {
                 flipSide();
+            }
+            if (checkBoardFull() && state == Inprogress){
+                state = Draw;
             }
         }
         return playerThatMoved;
@@ -95,6 +104,14 @@ public class Board {
 
     public Player getWinner() {
         return winner;
+    }
+
+    public Player getCurrentTurn() {
+        return currentTurn;
+    }
+
+    public GameState getState() {
+        return state;
     }
 }
 

@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import static com.haanhgs.tictactoemvc.GameState.Draw;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,28 +24,31 @@ public class MainActivity extends AppCompatActivity {
         clBoard = findViewById(R.id.clBoard);
     }
 
+    private void reset(){
+        board.restart();
+        String string = board.getCurrentTurn().toString() + " to move";
+        tvWinner.setText(string);
+        tvGroup.setVisibility(View.GONE);
+
+
+        for (int i = 0; i < clBoard.getChildCount(); i++){
+            Button button = (Button)clBoard.getChildAt(i);
+            button.setText("");
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
+        reset();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
-    }
-
-    private void reset(){
-        tvWinner.setText("");
-        tvGroup.setVisibility(View.GONE);
-        board.restart();
-
-        for (int i = 0; i < clBoard.getChildCount(); i++){
-            Button button = (Button)clBoard.getChildAt(i);
-            button.setText("");
-        }
     }
 
     @Override
@@ -57,17 +61,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onCellClicked(View view){
-
         Button button = (Button) view;
         String tag = button.getTag().toString();
         int row = Integer.valueOf(tag.substring(0, 1));
         int col = Integer.valueOf(tag.substring(1, 2));
         Player playerThatMoved = board.mark(row, col);
+        String string = board.getCurrentTurn().toString() + " to move";
+        tvWinner.setText(string);
         if (playerThatMoved != null){
             button.setText(playerThatMoved.toString());
             if (board.getWinner() != null){
                 tvWinner.setText(playerThatMoved.toString());
                 tvGroup.setVisibility(View.VISIBLE);
+            }
+            if (board.getState() == Draw){
+                tvWinner.setText(String.format("%s", "Game draw"));
             }
         }
     }
