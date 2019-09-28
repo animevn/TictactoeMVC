@@ -1,7 +1,5 @@
 package com.haanhgs.tictactoemvc;
 
-import java.io.PipedReader;
-
 import static com.haanhgs.tictactoemvc.Player.O;
 import static com.haanhgs.tictactoemvc.Player.X;
 
@@ -13,7 +11,7 @@ public class Board {
     private Player currentTurn;
 
     private enum GameState{
-        Inprogress, Finished;
+        Inprogress, Finished
     }
 
     private void clearCells(){
@@ -44,10 +42,7 @@ public class Board {
             return false;
         }else if (isOutOfBounds(row) || isOutOfBounds(col)){
             return false;
-        }else if (isCellValueAlreadySet(row, col)){
-            return false;
-        }
-        return true;
+        }else return !isCellValueAlreadySet(row, col);
     }
 
     private boolean isWinningMoveByPlayer(Player player, int currentRow, int currentCol){
