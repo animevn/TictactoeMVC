@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TictactoeMVC</string>
+    <string name="tvWinner">Winner</string>
+</resources>
