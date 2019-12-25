@@ -2,10 +2,14 @@ package com.haanhgs.tictactoemvc;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
@@ -84,6 +88,21 @@ public class MainActivity extends AppCompatActivity {
         forcePortraitMode();
         initBoard();
         resetBoard();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_setting, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.mniReset){
+            resetBoard();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void makeGameMove(Button button){
