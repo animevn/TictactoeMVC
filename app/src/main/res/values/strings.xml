@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">TictactoeMVC</string>
-    <string name="tvWinner">Winner</string>
-    <string name="tvWinnerViewGroup">is the Winner</string>
+    <string name="placeHolder">Holder</string>
     <string name="mniReset">Reset</string>
 </resources>
