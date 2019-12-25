@@ -15,7 +15,7 @@ public class Board {
     private Game game;
     private int currentMove;
 
-    private void clearCells(){
+    public void clearCells(){
         for (int i = 0; i < 3; i++){
             for (int j = 0; j < 3; j++){
                 cells[i][j] = new Cell();
@@ -77,7 +77,7 @@ public class Board {
         return true;
     }
 
-    private void flipSide(){
+    public void flipSide(){
         currentPlayer = currentPlayer == X ? O : X;
     }
 
@@ -87,12 +87,13 @@ public class Board {
     private void deleteMoveAfterCurrentMove(){
         if (currentMove < game.getMoves().size()){
             game.setMoves(game.getMoves().subList(0, currentMove));
+            state = InProgress;
         }
     }
 
     private void addMoveToCurrentGame(Player player, int row, int column){
         if (player != null){
-            game.getMoves().add(new Move(player, row, column));
+            game.getMoves().add(new Move(player, row, column, state));
             currentMove ++;
         }
 
@@ -103,7 +104,6 @@ public class Board {
         if (isCellValid(row, column)){
             deleteMoveAfterCurrentMove();
             cells[row][column].setPlayer(currentPlayer);
-            addMoveToCurrentGame(currentPlayer, row, column);
             player = currentPlayer;
             if (winningMove(player, row, column)){
                 state = HasResult;
@@ -111,9 +111,20 @@ public class Board {
             }else if (state == InProgress && isBoardFull()){
                 state = Draw;
             }
+            addMoveToCurrentGame(currentPlayer, row, column);
             flipSide();
         }
         return player;
+    }
+
+    //need this when rewinding game
+    public void clearACell(int row, int column){
+        cells[row][column] = new Cell();
+    }
+
+    //need this when fast forwarding game
+    public void reFillACell(Player player, int row, int column){
+        if (isCellEmpty(row, column)) cells[row][column].setPlayer(player);
     }
 
     public Player getCurrentPlayer() {
@@ -128,7 +139,19 @@ public class Board {
         return state;
     }
 
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
     public Game getGame() {
         return game;
+    }
+
+    public int getCurrentMove() {
+        return currentMove;
+    }
+
+    public void setCurrentMove(int currentMove) {
+        this.currentMove = currentMove;
     }
 }

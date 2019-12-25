@@ -1,15 +1,20 @@
 package com.haanhgs.tictactoemvc;
 
-public class Move {
+import java.io.Serializable;
+
+public class Move implements Serializable {
 
     private Player player;
     private int row;
     private int column;
+    private GameState state;
+    private static final long serialUID = 220479;
 
-    public Move(Player player, int row, int column) {
+    public Move(Player player, int row, int column, GameState state) {
         this.player = player;
         this.row = row;
         this.column = column;
+        this.state = state;
     }
 
     public Player getPlayer() {
@@ -34,5 +39,13 @@ public class Move {
 
     public void setColumn(int column) {
         this.column = column;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
     }
 }

@@ -11,8 +11,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import static com.haanhgs.tictactoemvc.GameState.Draw;
+import static com.haanhgs.tictactoemvc.GameState.HasResult;
+import static com.haanhgs.tictactoemvc.GameState.InProgress;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,12 +64,16 @@ public class MainActivity extends AppCompatActivity {
         tvResult.setText(string);
     }
 
-    private void resetBoard() {
-        board.restart();
-        handleTextView();
+    private void clearButtons(){
         for (int i = 0; i < clBoard.getChildCount(); i++) {
             ((Button) clBoard.getChildAt(i)).setText("");
         }
+    }
+
+    private void resetBoard() {
+        board.restart();
+        handleTextView();
+        clearButtons();
     }
 
     @Override
@@ -84,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private void makeGameMove(Button button){
         if (player != null){
             button.setText(player.toString());
-            if (board.getWinner() != null){
+            if (board.getState() == HasResult){
                 String winner = board.getWinner().toString() + " wins!!!";
                 tvResult.setText(winner);
             }
@@ -103,21 +108,105 @@ public class MainActivity extends AppCompatActivity {
         makeGameMove(button);
     }
 
+    private void clearButtonText(Move move){
+        String tag = "" + move.getRow() + move.getColumn();
+        Button button = clBoard.findViewWithTag(tag);
+        button.setText("");
+    }
+
+    private void fillButtonText(Move move){
+        String tag = "" + move.getRow() + move.getColumn();
+        Button button = clBoard.findViewWithTag(tag);
+        button.setText(move.getPlayer().toString());
+    }
+
+    private void handleButtonBack(){
+        int currentMove = board.getCurrentMove();
+        if (currentMove > 0){
+            Move move = board.getGame().getMoves().get(currentMove - 1);
+            clearButtonText(move);
+            board.clearACell(move.getRow(), move.getColumn());
+            board.setCurrentMove(currentMove - 1);
+            board.setState(move.getState());
+            board.flipSide();
+            handleTextView();
+        }
+    }
+
+    private void handleMoveState(Move move){
+        if (move.getState() == HasResult){
+            String winner = move.getPlayer().toString() + " wins!!!";
+            tvResult.setText(winner);
+        }
+        if (move.getState() == Draw){
+            tvResult.setText(String.format("%s", "Draw!!!"));
+        } else if (move.getState() == InProgress){
+            handleTextView();
+        }
+    }
+
+    private void handleButtonForward(){
+        int currentMove = board.getCurrentMove();
+        if (currentMove < board.getGame().getMoves().size()){
+            Move move = board.getGame().getMoves().get(currentMove);
+            fillButtonText(move);
+            board.reFillACell(move.getPlayer(), move.getRow(), move.getColumn());
+            board.setCurrentMove(currentMove + 1);
+            board.setState(move.getState());
+            board.flipSide();
+            handleMoveState(move);
+        }
+    }
+
+    private void handleButtonFirst(){
+        int currentMove = board.getCurrentMove();
+        if (currentMove > 0){
+            for (int i = currentMove; i > 0; i--){
+                Move move = board.getGame().getMoves().get(i - 1);
+                clearButtonText(move);
+                board.clearACell(move.getRow(), move.getColumn());
+                board.flipSide();
+                board.setState(move.getState());
+            }
+            board.setCurrentMove(0);
+            handleTextView();
+        }
+    }
+
+    private void handleButtonLast(){
+        int currentMove = board.getCurrentMove();
+        if (currentMove < board.getGame().getMoves().size()){
+            for (int i = currentMove; i < board.getGame().getMoves().size(); i++){
+                Move move = board.getGame().getMoves().get(i);
+                fillButtonText(move);
+                board.reFillACell(move.getPlayer(), move.getRow(), move.getColumn());
+                board.flipSide();
+                board.setState(move.getState());
+                handleMoveState(move);
+            }
+            board.setCurrentMove(board.getGame().getMoves().size());
+        }
+    }
+
     @OnClick({R.id.bn1, R.id.bn2, R.id.bn3, R.id.bn4, R.id.bn5, R.id.bn6, R.id.bn7, R.id.bn8,
             R.id.bn9, R.id.bnFirst, R.id.bnBack, R.id.bnForward, R.id.bnLast})
     public void onViewClicked(View view) {
-        Button button = (Button)view;
         switch (view.getId()) {
             default:
+                Button button = (Button)view;
                 onButtonClick(button);
                 break;
             case R.id.bnFirst:
+                handleButtonFirst();
                 break;
             case R.id.bnBack:
+                handleButtonBack();
                 break;
             case R.id.bnForward:
+                handleButtonForward();
                 break;
             case R.id.bnLast:
+                handleButtonLast();
                 break;
         }
     }
