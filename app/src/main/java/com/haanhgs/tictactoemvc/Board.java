@@ -12,6 +12,8 @@ public class Board {
     private Player winner;
     private Player currentPlayer;
     private GameState state;
+    private Game game;
+    private int currentMove;
 
     private void clearCells(){
         for (int i = 0; i < 3; i++){
@@ -26,6 +28,8 @@ public class Board {
         winner = null;
         currentPlayer = X;
         state = InProgress;
+        game = new Game();
+        currentMove = 0;
     }
 
     public Board(){
@@ -77,10 +81,29 @@ public class Board {
         currentPlayer = currentPlayer == X ? O : X;
     }
 
+    //when users move back and forth with buttons, if they choose a new move
+    //then the game will continue from that move, and all moves that come following
+    //that move will be deleted.
+    private void deleteMoveAfterCurrentMove(){
+        if (currentMove < game.getMoves().size()){
+            game.setMoves(game.getMoves().subList(0, currentMove));
+        }
+    }
+
+    private void addMoveToCurrentGame(Player player, int row, int column){
+        if (player != null){
+            game.getMoves().add(new Move(player, row, column));
+            currentMove ++;
+        }
+
+    }
+
     public Player makeMove(int row, int column){
         Player player = null;
         if (isCellValid(row, column)){
+            deleteMoveAfterCurrentMove();
             cells[row][column].setPlayer(currentPlayer);
+            addMoveToCurrentGame(currentPlayer, row, column);
             player = currentPlayer;
             if (winningMove(player, row, column)){
                 state = HasResult;
@@ -103,5 +126,9 @@ public class Board {
 
     public GameState getState() {
         return state;
+    }
+
+    public Game getGame() {
+        return game;
     }
 }
