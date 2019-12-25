@@ -95,6 +95,7 @@ public class Board {
         if (player != null){
             game.getMoves().add(new Move(player, row, column, state));
             currentMove ++;
+            game.setCurrentMove(currentMove);
         }
 
     }
@@ -147,11 +148,16 @@ public class Board {
         return game;
     }
 
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
     public int getCurrentMove() {
         return currentMove;
     }
 
     public void setCurrentMove(int currentMove) {
         this.currentMove = currentMove;
+        game.setCurrentMove(currentMove);
     }
 }

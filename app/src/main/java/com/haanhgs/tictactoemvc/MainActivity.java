@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -88,6 +87,37 @@ public class MainActivity extends AppCompatActivity {
         forcePortraitMode();
         initBoard();
         resetBoard();
+    }
+
+    private void moveToCurrentMove(int currentMove){
+        for (int i = 0; i < currentMove; i++){
+            Move move = board.getGame().getMoves().get(i);
+            fillButtonText(move);
+            board.reFillACell(move.getPlayer(), move.getRow(), move.getColumn());
+            board.flipSide();
+            board.setState(move.getState());
+            handleMoveState(move);
+        }
+        board.setCurrentMove(currentMove);
+    }
+
+    private void loadSaveGame(){
+        Game game = Repo.load(this);
+        int currentMove = game.getCurrentMove();
+        board.setGame(game);
+        moveToCurrentMove(currentMove);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadSaveGame();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Repo.save(this, board.getGame());
     }
 
     @Override
