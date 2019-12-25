@@ -93,4 +93,15 @@ public class Board {
         return player;
     }
 
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public Player getWinner() {
+        return winner;
+    }
+
+    public GameState getState() {
+        return state;
+    }
 }
