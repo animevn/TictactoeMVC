@@ -18,6 +18,7 @@ import static com.haanhgs.tictactoemvc.GameState.Draw;
 import static com.haanhgs.tictactoemvc.GameState.HasResult;
 import static com.haanhgs.tictactoemvc.GameState.InProgress;
 
+//test game
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.tvResult)
